@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
 {
@@ -20,7 +23,7 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         //
-         try{
+      try{
          $validate = $request->validate([
             "name"=>["string","required","min:3",
             Rule::unique("product","name")
@@ -32,6 +35,23 @@ class ProductController extends Controller
         if($request->hasFile("image")){
             $imagepath = $request->file("image")->store("product-img","public");
         }
+        $product = Product::create(
+            [
+                "name"=>$validate["name"],
+                "price"=>$validate["price"],
+                "image_url"=>$imagepath,
+            ]
+        );
+        return response()->json([
+            "data"=>$product,
+        ]);
+      }
+      catch(Exception $err){
+        return response()->json([
+            "data"=>$err->getMessage()
+        ]);
+
+      }
     }
 
     /**
@@ -39,7 +59,7 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
-        //
+        // 
     }
 
     /**
