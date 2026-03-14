@@ -20,6 +20,18 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         //
+         try{
+         $validate = $request->validate([
+            "name"=>["string","required","min:3",
+            Rule::unique("product","name")
+            ],
+            "price"=>"required|numeric",
+            "image"=> "required|image|mimes:jpg,png,jpeg,gif"
+        ]);
+        $imagepath = "";
+        if($request->hasFile("image")){
+            $imagepath = $request->file("image")->store("product-img","public");
+        }
     }
 
     /**
